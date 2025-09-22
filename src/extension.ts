@@ -20,7 +20,8 @@ type Cfg = {
   excludePattern: string;
 };
 
-let panels = new Map<string, vscode.WebviewPanel>();
+let sharedPanel: vscode.WebviewPanel | undefined;
+let currentUri: vscode.Uri | undefined;
 let changeTimers = new Map<string, NodeJS.Timeout>();
 
 export function activate(context: vscode.ExtensionContext) {
@@ -43,10 +44,11 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   const refresh = vscode.commands.registerCommand('sv2svgPreview.refresh', async () => {
-    const active = vscode.window.activeTextEditor?.document.uri;
-    if (!active) return;
-    const panel = panels.get(active.toString());
-    if (panel) await renderToPanel(active, panel, context);
+    if (!sharedPanel || !currentUri) {
+      vscode.window.showInformationMessage('Preview .sv is not open.');
+      return;
+    }
+    await renderToPanel(currentUri, sharedPanel, context);
   });
 
   const toggleAuto = vscode.commands.registerCommand('sv2svgPreview.toggleAuto', async () => {
@@ -62,19 +64,20 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.workspace.onDidSaveTextDocument(async (doc) => {
     const cfg = getCfg();
     if (cfg.onSave !== 'refresh') return;
-    const panel = panels.get(doc.uri.toString());
-    if (panel) await renderToPanel(doc.uri, panel, context);
+    if (sharedPanel && currentUri && doc.uri.toString() === currentUri.toString()) {
+      await renderToPanel(doc.uri, sharedPanel, context);
+    }
   });
 
   vscode.workspace.onDidChangeTextDocument((e) => {
     const cfg = getCfg();
     if (!cfg.onChange) return;
-    const panel = panels.get(e.document.uri.toString());
-    if (!panel) return;
+    if (!sharedPanel || !currentUri) return;
+    if (e.document.uri.toString() !== currentUri.toString()) return;
     const key = e.document.uri.toString();
     if (changeTimers.has(key)) clearTimeout(changeTimers.get(key)!);
     changeTimers.set(key, setTimeout(async () => {
-      await renderToPanel(e.document.uri, panel, context, /*useTemp*/ true);
+      await renderToPanel(e.document.uri, sharedPanel!, context, /*useTemp*/ true);
     }, 500));
   });
 
@@ -91,8 +94,9 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-  panels.forEach((p) => p.dispose());
-  panels.clear();
+  sharedPanel?.dispose();
+  sharedPanel = undefined;
+  currentUri = undefined;
 }
 
 async function openPreview(uri: vscode.Uri, viewColumn: vscode.ViewColumn, ctx: vscode.ExtensionContext) {
@@ -105,24 +109,26 @@ async function openPreview(uri: vscode.Uri, viewColumn: vscode.ViewColumn, ctx: 
     return;
   }
 
-  const key = uri.toString();
-  let panel = panels.get(key);
-  if (panel) {
-    panel.reveal(viewColumn);
-    panel.title = makeTitle(uri);
+  currentUri = uri;
+
+  if (sharedPanel) {
+    sharedPanel.reveal(viewColumn, true);
   } else {
-    panel = vscode.window.createWebviewPanel(
+    sharedPanel = vscode.window.createWebviewPanel(
       'sv2svgPreview',
       makeTitle(uri),
       viewColumn,
       { enableScripts: true, retainContextWhenHidden: true }
     );
-    panels.set(key, panel);
-    panel.onDidDispose(() => panels.delete(key));
-    try { panel.iconPath = getIcon(ctx); } catch {}
+    sharedPanel.onDidDispose(() => {
+      sharedPanel = undefined;
+      currentUri = undefined;
+    });
+    try { sharedPanel.iconPath = getIcon(ctx); } catch {}
   }
 
-  await renderToPanel(uri, panel, ctx);
+  sharedPanel.title = makeTitle(uri);
+  await renderToPanel(uri, sharedPanel, ctx);
 }
 
 function getCfg(): Cfg {
@@ -172,7 +178,6 @@ async function maybeAutoOpen(uri: vscode.Uri, ctx: vscode.ExtensionContext) {
   if (!cfg.autoOnOpen) return;
   if (!isSvFile(uri)) return;
   if (isExcluded(uri)) return;
-  if (panels.has(uri.toString())) return;
   await openPreview(uri, vscode.ViewColumn.Beside, ctx);
 }
 
