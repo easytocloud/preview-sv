@@ -1,0 +1,158 @@
+{
+  "name": "preview-sv",
+  "displayName": "Preview .sv",
+  "description": "Preview SystemVerilog (.sv) files as schematics using sv2svg (via uvx)",
+  "version": "0.0.2",
+  "publisher": "easytocloud",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Visualization"],
+  "keywords": ["systemverilog", "verilog", "schematic", "svg", "preview"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/easytocloud/preview-sv.git"
+  },
+  "bugs": {
+    "url": "https://github.com/easytocloud/preview-sv/issues"
+  },
+  "homepage": "https://github.com/easytocloud/preview-sv#readme",
+  "icon": "media/icon.png",
+  "activationEvents": [
+    "onCommand:sv2svgPreview.open",
+    "onCommand:sv2svgPreview.openToSide",
+    "onCommand:sv2svgPreview.refresh",
+    "onCommand:sv2svgPreview.toggleAuto",
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "sv2svgPreview.open",
+        "title": "SV2SVG: Open Preview"
+      },
+      {
+        "command": "sv2svgPreview.openToSide",
+        "title": "SV2SVG: Open Preview to the Side"
+      },
+      {
+        "command": "sv2svgPreview.refresh",
+        "title": "SV2SVG: Refresh Preview"
+      },
+      {
+        "command": "sv2svgPreview.toggleAuto",
+        "title": "SV2SVG: Toggle Auto Preview"
+      }
+    ],
+    "configuration": {
+      "title": "Preview .sv",
+      "properties": {
+        "sv2svgPreview.runner": {
+          "type": "string",
+          "default": "uvx",
+          "description": "Command used to invoke the runner (e.g., 'uvx' or a full path)."
+        },
+        "sv2svgPreview.command": {
+          "type": "string",
+          "default": "sv2svg",
+          "description": "sv2svg sub-command passed to the runner (first arg)."
+        },
+        "sv2svgPreview.runnerArgs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Extra args passed to the runner before the command (e.g., ['--refresh'] for uvx)."
+        },
+        "sv2svgPreview.args": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["-o", "-"],
+          "description": "Additional CLI args passed after the file path (default uses stdout via -o -)."
+        },
+        "sv2svgPreview.onSave": {
+          "type": "string",
+          "enum": ["refresh", "off"],
+          "default": "refresh",
+          "description": "Auto-refresh preview when the document is saved."
+        },
+        "sv2svgPreview.onChange": {
+          "type": "boolean",
+          "default": false,
+          "description": "Experimental: re-render while typing (debounced using a temp file)."
+        },
+        "sv2svgPreview.excludePattern": {
+          "type": "string",
+          "default": ".*_tb\\.sv$",
+          "description": "Regex for filenames to exclude (e.g., testbenches like *_tb.sv)."
+        },
+        "sv2svgPreview.argsBeforeFile": {
+          "type": "boolean",
+          "default": false,
+          "description": "Place CLI args before the input file path when invoking sv2svg."
+        },
+        "sv2svgPreview.autoOnOpen": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically open preview when a .sv file becomes active."
+        },
+        "sv2svgPreview.renderTimeoutMs": {
+          "type": "number",
+          "default": 15000,
+          "description": "Timeout for rendering process in milliseconds."
+        }
+      }
+    },
+    "menus": {
+      "editor/title": [
+        {
+          "command": "sv2svgPreview.openToSide",
+          "group": "navigation@10",
+          "when": "resourceExtname == .sv",
+          "icon": {
+            "light": "media/menu-light.svg",
+            "dark": "media/menu-dark.svg"
+          }
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "sv2svgPreview.open",
+          "when": "resourceExtname == .sv",
+          "group": "2_preview"
+        },
+        {
+          "command": "sv2svgPreview.openToSide",
+          "when": "resourceExtname == .sv",
+          "group": "2_preview"
+        },
+        {
+          "command": "sv2svgPreview.refresh",
+          "when": "resourceExtname == .sv",
+          "group": "2_preview"
+        },
+        {
+          "command": "sv2svgPreview.toggleAuto",
+          "when": "resourceExtname == .sv",
+          "group": "2_preview"
+        }
+      ],
+      "commandPalette": [
+        { "command": "sv2svgPreview.open" },
+        { "command": "sv2svgPreview.openToSide" },
+        { "command": "sv2svgPreview.refresh" }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "@types/vscode": "^1.80.0"
+  }
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <style>
+      .stroke{stroke:#4ec9b0;stroke-width:6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .dot{fill:#4ec9b0}
+    </style>
+  </defs>
+  <!-- Simple NAND symbol: curved right, bubble, two inputs -->
+  <path class="stroke" d="M16 36h24m-24 56h24M40 24h24c24 0 40 16 40 40s-16 40-40 40H40"/>
+  <circle class="dot" cx="108" cy="64" r="6"/>
+  <path class="stroke" d="M114 64h12"/>
+</svg>
+
