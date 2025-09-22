@@ -1,11 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
   <defs>
-    <linearGradient id="strokeLight" x1="2" y1="3" x2="14" y2="13" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#0f6fc9"/>
-      <stop offset="1" stop-color="#2fb6d9"/>
+    <linearGradient id="mainLight" x1="2" y1="3" x2="14" y2="13" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1595ff"/>
+      <stop offset="1" stop-color="#3dd7ff"/>
+    </linearGradient>
+    <linearGradient id="accentLight" x1="3" y1="3" x2="12" y2="13" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#59e6ff" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#9ef7ff" stop-opacity="0.5"/>
     </linearGradient>
   </defs>
-  <path d="M1.6 4.1H3.9M1.6 11.9H3.9M3.9 2.7h3.4c2.8 0 4.9 1.9 4.9 5.3s-2.1 5.3-4.9 5.3H3.9" fill="none" stroke="url(#strokeLight)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="12.6" cy="8" r="1.1" fill="#2fb6d9"/>
-  <path d="M13.7 8H15" stroke="#2fb6d9" stroke-width="1.4" stroke-linecap="round"/>
+  <path d="M1.4 4.4H3.6M1.4 11.6H3.6" fill="none" stroke="url(#mainLight)" stroke-width="1.4" stroke-linecap="round"/>
+  <path d="M3.6 3.2h3c2.7 0 4.8 1.7 4.8 4.8s-2.1 4.8-4.8 4.8h-3" fill="none" stroke="url(#mainLight)" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M2.8 3.2c2.4 0 4.4 1.6 4.4 4.8s-2 4.8-4.4 4.8" fill="none" stroke="url(#accentLight)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M11.6 8H14.6" fill="none" stroke="url(#mainLight)" stroke-width="1.45" stroke-linecap="round"/>
 </svg>
