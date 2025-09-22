@@ -109,10 +109,10 @@ async function openPreview(uri: vscode.Uri, viewColumn: vscode.ViewColumn, ctx: 
     return;
   }
 
+  const previousEditor = vscode.window.activeTextEditor;
   currentUri = uri;
 
   if (sharedPanel) {
-    sharedPanel.reveal(viewColumn, true);
   } else {
     sharedPanel = vscode.window.createWebviewPanel(
       'sv2svgPreview',
@@ -127,8 +127,16 @@ async function openPreview(uri: vscode.Uri, viewColumn: vscode.ViewColumn, ctx: 
     try { sharedPanel.iconPath = getIcon(ctx); } catch {}
   }
 
+  sharedPanel.reveal(viewColumn, true);
   sharedPanel.title = makeTitle(uri);
   await renderToPanel(uri, sharedPanel, ctx);
+
+  if (previousEditor && previousEditor.viewColumn !== undefined) {
+    await vscode.window.showTextDocument(previousEditor.document, {
+      viewColumn: previousEditor.viewColumn,
+      preserveFocus: false,
+    });
+  }
 }
 
 function getCfg(): Cfg {
