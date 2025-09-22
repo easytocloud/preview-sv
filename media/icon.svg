@@ -1,14 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
   <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1f2634"/>
+      <stop offset="100%" stop-color="#0c0f18"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="30%" y1="20%" x2="80%" y2="90%">
+      <stop offset="0%" stop-color="#3db3a1" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#53e0c9" stop-opacity="0.4"/>
+    </linearGradient>
     <style>
-      .stroke{stroke:#4ec9b0;stroke-width:6;fill:none;stroke-linecap:round;stroke-linejoin:round}
-      .dot{fill:#4ec9b0}
+      .gate-line{stroke:#86f3dd;stroke-width:6.5;stroke-linecap:round;stroke-linejoin:round;fill:none}
+      .gate-sheen{stroke:#b8fff2;stroke-width:3.5;stroke-linecap:round;opacity:0.35}
     </style>
   </defs>
-  <!-- Simple NAND symbol: curved right, bubble, two inputs -->
-  <path class="stroke" d="M16 36h24m-24 56h24M40 24h24c24 0 40 16 40 40s-16 40-40 40H40"/>
-  <circle class="dot" cx="108" cy="64" r="6"/>
-  <path class="stroke" d="M114 64h12"/>
-</svg>
 
+  <rect width="128" height="128" rx="24" fill="url(#bg)"/>
+  <circle cx="64" cy="64" r="50" fill="none" stroke="url(#ring)" stroke-width="6"/>
+
+  <g transform="translate(12 0)">
+    <path class="gate-line" d="M20 44h20M20 84h20"/>
+    <path class="gate-line" d="M40 32v64"/>
+    <path class="gate-line" d="M40 32h20c22 0 40 18 40 32s-18 32-40 32H40"/>
+    <path class="gate-sheen" d="M42 36h18c20 0 36 14 36 28s-16 28-36 28H42"/>
+    <circle cx="96" cy="64" r="8" fill="#86f3dd"/>
+    <path class="gate-line" d="M104 64h16"/>
+  </g>
+
+  <circle cx="64" cy="64" r="56" fill="none" stroke="#0f1a24" stroke-width="6" opacity="0.35"/>
+</svg>
