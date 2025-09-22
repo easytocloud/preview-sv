@@ -2,13 +2,21 @@
   "name": "preview-sv",
   "displayName": "Preview .sv",
   "description": "Preview SystemVerilog (.sv) files as schematics using sv2svg (via uvx)",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "easytocloud",
   "engines": {
     "vscode": "^1.80.0"
   },
-  "categories": ["Visualization"],
-  "keywords": ["systemverilog", "verilog", "schematic", "svg", "preview"],
+  "categories": [
+    "Visualization"
+  ],
+  "keywords": [
+    "systemverilog",
+    "verilog",
+    "schematic",
+    "svg",
+    "preview"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -61,19 +69,29 @@
         },
         "sv2svgPreview.runnerArgs": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "default": [],
           "description": "Extra args passed to the runner before the command (e.g., ['--refresh'] for uvx)."
         },
         "sv2svgPreview.args": {
           "type": "array",
-          "items": { "type": "string" },
-          "default": ["-o", "-"],
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "-o",
+            "-"
+          ],
           "description": "Additional CLI args passed after the file path (default uses stdout via -o -)."
         },
         "sv2svgPreview.onSave": {
           "type": "string",
-          "enum": ["refresh", "off"],
+          "enum": [
+            "refresh",
+            "off"
+          ],
           "default": "refresh",
           "description": "Auto-refresh preview when the document is saved."
         },
@@ -139,9 +157,15 @@
         }
       ],
       "commandPalette": [
-        { "command": "sv2svgPreview.open" },
-        { "command": "sv2svgPreview.openToSide" },
-        { "command": "sv2svgPreview.refresh" }
+        {
+          "command": "sv2svgPreview.open"
+        },
+        {
+          "command": "sv2svgPreview.openToSide"
+        },
+        {
+          "command": "sv2svgPreview.refresh"
+        }
       ]
     }
   },
