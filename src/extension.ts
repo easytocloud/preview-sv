@@ -321,9 +321,10 @@ function wrapSvg(svg: string): string {
     <style>
       html, body { height: 100%; margin: 0; background: var(--vscode-editor-background); }
       #toolbar { position: fixed; top: 8px; right: 8px; z-index: 10; display: flex; gap: 6px; }
-      button { background: var(--vscode-button-background); color: var(--vscode-button-foreground); border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
+      button { background: var(--vscode-button-background); color: var(--vscode-button-foreground); border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 500; }
       button:hover { background: var(--vscode-button-hoverBackground); }
-      #container { width: 100%; height: 100%; overflow: hidden; }
+      #container { width: 100%; height: 100%; overflow: hidden; cursor: grab; }
+      #container.panning { cursor: grabbing; }
       svg { width: 100%; height: 100%; }
     </style>
   </head>
@@ -340,33 +341,101 @@ function wrapSvg(svg: string): string {
         const svg = container.querySelector('svg');
         if (!svg) return;
 
-        let scale = 1; let tx = 0; let ty = 0; let panning = false; let lastX = 0; let lastY = 0;
         const hasViewBox = svg.hasAttribute('viewBox');
-        let vb = hasViewBox ? svg.getAttribute('viewBox').split(/\s+/).map(Number) : [0,0,1000,1000];
+        const viewBoxAttr = svg.getAttribute('viewBox');
 
-        function apply(){
-          if (hasViewBox) {
-            const cx = vb[0] + vb[2]/2; const cy = vb[1] + vb[3]/2;
-            const w = vb[2] / scale; const h = vb[3] / scale;
-            const x = cx - w/2 - tx; const y = cy - h/2 - ty;
-            svg.setAttribute('viewBox', [x,y,w,h].join(' '));
-          } else {
-            svg.style.transform = 'translate('+tx+'px,'+ty+'px) scale('+scale+')';
-            svg.style.transformOrigin = '0 0';
+        const zoomIn = document.getElementById('zoomIn');
+        const zoomOut = document.getElementById('zoomOut');
+        const reset = document.getElementById('reset');
+
+        zoomIn.addEventListener('click', ()=> {
+          if (!hasViewBox) return;
+          const parts = svg.getAttribute('viewBox').split(' ');
+          if (parts.length === 4) {
+            const vb = parts.map(Number);
+            // Zoom in: reduce width/height by 20%
+            const newW = vb[2] * 0.8;
+            const newH = vb[3] * 0.8;
+            const newX = vb[0] + (vb[2] - newW) / 2;
+            const newY = vb[1] + (vb[3] - newH) / 2;
+            svg.setAttribute('viewBox', [newX, newY, newW, newH].join(' '));
           }
-        }
+        });
 
-        function zoom(f){ scale *= f; scale = Math.max(0.1, Math.min(10, scale)); apply(); }
-        function pan(dx, dy){ tx += dx/scale; ty += dy/scale; apply(); }
+        zoomOut.addEventListener('click', ()=> {
+          if (!hasViewBox) return;
+          const parts = svg.getAttribute('viewBox').split(' ');
+          if (parts.length === 4) {
+            const vb = parts.map(Number);
+            // Zoom out: increase width/height by 25%
+            const newW = vb[2] * 1.25;
+            const newH = vb[3] * 1.25;
+            const newX = vb[0] - (newW - vb[2]) / 2;
+            const newY = vb[1] - (newH - vb[3]) / 2;
+            svg.setAttribute('viewBox', [newX, newY, newW, newH].join(' '));
+          }
+        });
 
-        document.getElementById('zoomIn').addEventListener('click', ()=> zoom(1.2));
-        document.getElementById('zoomOut').addEventListener('click', ()=> zoom(1/1.2));
-        document.getElementById('reset').addEventListener('click', ()=> { scale=1; tx=0; ty=0; if (hasViewBox) svg.setAttribute('viewBox', vb.join(' ')); else svg.style.transform=''; });
+        reset.addEventListener('click', ()=> {
+          if (!hasViewBox) return;
+          svg.setAttribute('viewBox', viewBoxAttr);
+        });
 
-        container.addEventListener('wheel', (e)=>{ e.preventDefault(); zoom(e.deltaY < 0 ? 1.1 : 1/1.1); }, { passive: false });
-        container.addEventListener('mousedown', (e)=>{ panning=true; lastX=e.clientX; lastY=e.clientY; });
-        window.addEventListener('mousemove', (e)=>{ if(!panning) return; pan(e.clientX-lastX, e.clientY-lastY); lastX=e.clientX; lastY=e.clientY; });
-        window.addEventListener('mouseup', ()=>{ panning=false; });
+        // Pan/drag functionality
+        let panning = false;
+        let startX = 0;
+        let startY = 0;
+
+        container.addEventListener('mousedown', (e)=> {
+          if (e.button === 0 && hasViewBox) {
+            panning = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            container.classList.add('panning');
+            e.preventDefault();
+          }
+        });
+
+        window.addEventListener('mousemove', (e)=> {
+          if (!panning) return;
+
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+
+          const parts = svg.getAttribute('viewBox').split(' ');
+          if (parts.length === 4) {
+            const vb = parts.map(Number);
+            const containerRect = container.getBoundingClientRect();
+            // Convert screen pixel movement to viewBox units
+            const vbDx = -(dx / containerRect.width) * vb[2];
+            const vbDy = -(dy / containerRect.height) * vb[3];
+            svg.setAttribute('viewBox', [(vb[0] + vbDx), (vb[1] + vbDy), vb[2], vb[3]].join(' '));
+          }
+
+          startX = e.clientX;
+          startY = e.clientY;
+        });
+
+        window.addEventListener('mouseup', ()=> {
+          panning = false;
+          container.classList.remove('panning');
+        });
+
+        // Mouse wheel zoom
+        container.addEventListener('wheel', (e)=> {
+          if (!hasViewBox) return;
+          e.preventDefault();
+          const parts = svg.getAttribute('viewBox').split(' ');
+          if (parts.length === 4) {
+            const vb = parts.map(Number);
+            const factor = e.deltaY < 0 ? 0.9 : 1.1;
+            const newW = vb[2] * factor;
+            const newH = vb[3] * factor;
+            const newX = vb[0] + (vb[2] - newW) / 2;
+            const newY = vb[1] + (vb[3] - newH) / 2;
+            svg.setAttribute('viewBox', [newX, newY, newW, newH].join(' '));
+          }
+        }, { passive: false });
       })();
     </script>
   </body>
