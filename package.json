@@ -27,6 +27,11 @@
   },
   "homepage": "https://github.com/easytocloud/preview-sv#readme",
   "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "preview": false,
   "activationEvents": [
     "onCommand:sv2svgPreview.open",
     "onCommand:sv2svgPreview.openToSide",
@@ -39,19 +44,23 @@
     "commands": [
       {
         "command": "sv2svgPreview.open",
-        "title": "SV2SVG: Open Preview"
+        "title": "sv2svg: Open Preview"
       },
       {
         "command": "sv2svgPreview.openToSide",
-        "title": "SV2SVG: Open Preview to the Side"
+        "title": "sv2svg: Open Preview to the Side",
+        "icon": {
+          "light": "media/menu-light.svg",
+          "dark": "media/menu-dark.svg"
+        }
       },
       {
         "command": "sv2svgPreview.refresh",
-        "title": "SV2SVG: Refresh Preview"
+        "title": "sv2svg: Refresh Preview"
       },
       {
         "command": "sv2svgPreview.toggleAuto",
-        "title": "SV2SVG: Toggle Auto Preview"
+        "title": "sv2svg: Toggle Auto Preview"
       }
     ],
     "configuration": {
@@ -126,12 +135,8 @@
       "editor/title": [
         {
           "command": "sv2svgPreview.openToSide",
-          "group": "navigation@10",
-          "when": "resourceExtname == .sv",
-          "icon": {
-            "light": "media/menu-light.svg",
-            "dark": "media/menu-dark.svg"
-          }
+          "group": "navigation",
+          "when": "resourceExtname == .sv"
         }
       ],
       "explorer/context": [
