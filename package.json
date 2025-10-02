@@ -128,6 +128,78 @@
           "type": "number",
           "default": 15000,
           "description": "Timeout for rendering process in milliseconds."
+        },
+        "sv2svgPreview.renderOptions.inputOrder": {
+          "type": "string",
+          "enum": [
+            "alpha",
+            "ports",
+            "auto"
+          ],
+          "default": "alpha",
+          "description": "Order primary inputs: 'alpha' (alphabetical), 'ports' (module header order), or 'auto'."
+        },
+        "sv2svgPreview.renderOptions.gridX": {
+          "type": "number",
+          "default": 0,
+          "description": "Snap X coordinates to this grid step (0 to disable)."
+        },
+        "sv2svgPreview.renderOptions.gridY": {
+          "type": "number",
+          "default": 0,
+          "description": "Snap Y coordinates to this grid step (0 to disable)."
+        },
+        "sv2svgPreview.renderOptions.noSymmetry": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disable symmetric sibling placement around shared driver centerlines."
+        },
+        "sv2svgPreview.renderOptions.style": {
+          "type": "string",
+          "enum": [
+            "classic",
+            "blueprint",
+            "midnight",
+            "mono",
+            "vibrant",
+            "dark"
+          ],
+          "default": "classic",
+          "description": "Color/line weight preset for the generated diagram."
+        },
+        "sv2svgPreview.renderOptions.orientation": {
+          "type": "string",
+          "enum": [
+            "horizontal",
+            "vertical"
+          ],
+          "default": "horizontal",
+          "description": "Diagram layout: horizontal (left-to-right) or vertical (top-to-bottom)."
+        },
+        "sv2svgPreview.renderOptions.table": {
+          "type": "boolean",
+          "default": false,
+          "description": "Include truth table in the diagram."
+        },
+        "sv2svgPreview.renderOptions.noCaption": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress the 'Module: modulename' caption."
+        },
+        "sv2svgPreview.renderOptions.fillGates": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable subtle fill colors for logic gates."
+        },
+        "sv2svgPreview.renderOptions.signalStyles": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use different line styles for signal types (solid=primary, dashed=intermediate)."
+        },
+        "sv2svgPreview.renderOptions.fanoutWires": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use thicker wires for signals with higher fan-out."
         }
       }
     },
