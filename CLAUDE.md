@@ -78,6 +78,8 @@ All settings under `sv2svgPreview.*`:
 - `orientation` - Layout direction: horizontal, vertical
 - `table` - Include truth table in diagram
 - `noCaption` - Hide module name caption
+- `noInternalLabels` - Suppress internal signal labels (auto_, _expr)
+- `noLabels` - Hide all labels except input and output
 - `fillGates` - Enable subtle fill colors for logic gates
 - `signalStyles` - Different line styles for signal types
 - `fanoutWires` - Thicker wires for higher fan-out signals

@@ -29,6 +29,8 @@ type Sv2SvgOptions = {
   orientation: 'horizontal' | 'vertical';
   table: boolean;
   noCaption: boolean;
+  noInternalLabels: boolean;
+  noLabels: boolean;
   fillGates: boolean;
   signalStyles: boolean;
   fanoutWires: boolean;
@@ -49,6 +51,8 @@ function getDefaultSv2SvgOptions(): Sv2SvgOptions {
     orientation: 'horizontal',
     table: false,
     noCaption: false,
+    noInternalLabels: false,
+    noLabels: false,
     fillGates: false,
     signalStyles: false,
     fanoutWires: false,
@@ -66,6 +70,8 @@ function loadSv2SvgOptions(): Sv2SvgOptions {
     orientation: cfg.get('orientation', 'horizontal'),
     table: cfg.get('table', false),
     noCaption: cfg.get('noCaption', false),
+    noInternalLabels: cfg.get('noInternalLabels', false),
+    noLabels: cfg.get('noLabels', false),
     fillGates: cfg.get('fillGates', false),
     signalStyles: cfg.get('signalStyles', false),
     fanoutWires: cfg.get('fanoutWires', false),
@@ -82,6 +88,8 @@ async function saveSv2SvgOptions(options: Sv2SvgOptions): Promise<void> {
   await cfg.update('orientation', options.orientation, vscode.ConfigurationTarget.Workspace);
   await cfg.update('table', options.table, vscode.ConfigurationTarget.Workspace);
   await cfg.update('noCaption', options.noCaption, vscode.ConfigurationTarget.Workspace);
+  await cfg.update('noInternalLabels', options.noInternalLabels, vscode.ConfigurationTarget.Workspace);
+  await cfg.update('noLabels', options.noLabels, vscode.ConfigurationTarget.Workspace);
   await cfg.update('fillGates', options.fillGates, vscode.ConfigurationTarget.Workspace);
   await cfg.update('signalStyles', options.signalStyles, vscode.ConfigurationTarget.Workspace);
   await cfg.update('fanoutWires', options.fanoutWires, vscode.ConfigurationTarget.Workspace);
@@ -364,6 +372,8 @@ function buildArgs(cfg: Cfg, filePath: string, extra: string[], options: Sv2SvgO
   if (options.noSymmetry) sv2svgArgs.push('--no-symmetry');
   if (options.table) sv2svgArgs.push('--table');
   if (options.noCaption) sv2svgArgs.push('--no-caption');
+  if (options.noInternalLabels) sv2svgArgs.push('--no-internal-labels');
+  if (options.noLabels) sv2svgArgs.push('--no-labels');
   if (options.fillGates) sv2svgArgs.push('--fill-gates');
   if (options.signalStyles) sv2svgArgs.push('--signal-styles');
   if (options.fanoutWires) sv2svgArgs.push('--fanout-wires');
@@ -883,6 +893,22 @@ function wrapSvg(svg: string): string {
               <span class="label-desc">Hide module name caption</span>
             </label>
           </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="noInternalLabels">
+            <label for="noInternalLabels">
+              No Internal Labels
+              <span class="label-desc">Suppress internal signal labels</span>
+            </label>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="noLabels">
+            <label for="noLabels">
+              No Labels
+              <span class="label-desc">Hide all labels except I/O</span>
+            </label>
+          </div>
         </div>
       </div>
 
@@ -1011,6 +1037,8 @@ function wrapSvg(svg: string): string {
           document.getElementById('orientation').value = settings.orientation;
           document.getElementById('table').checked = settings.table;
           document.getElementById('noCaption').checked = settings.noCaption;
+          document.getElementById('noInternalLabels').checked = settings.noInternalLabels;
+          document.getElementById('noLabels').checked = settings.noLabels;
           document.getElementById('fillGates').checked = settings.fillGates;
           document.getElementById('signalStyles').checked = settings.signalStyles;
           document.getElementById('fanoutWires').checked = settings.fanoutWires;
@@ -1026,6 +1054,8 @@ function wrapSvg(svg: string): string {
             orientation: document.getElementById('orientation').value,
             table: document.getElementById('table').checked,
             noCaption: document.getElementById('noCaption').checked,
+            noInternalLabels: document.getElementById('noInternalLabels').checked,
+            noLabels: document.getElementById('noLabels').checked,
             fillGates: document.getElementById('fillGates').checked,
             signalStyles: document.getElementById('signalStyles').checked,
             fanoutWires: document.getElementById('fanoutWires').checked,

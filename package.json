@@ -186,6 +186,16 @@
           "default": false,
           "description": "Suppress the 'Module: modulename' caption."
         },
+        "sv2svgPreview.renderOptions.noInternalLabels": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress internal signal labels."
+        },
+        "sv2svgPreview.renderOptions.noLabels": {
+          "type": "boolean",
+          "default": false,
+          "description": "Hide all labels except input and output."
+        },
         "sv2svgPreview.renderOptions.fillGates": {
           "type": "boolean",
           "default": false,
