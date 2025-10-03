@@ -222,6 +222,19 @@ async function openPreview(uri: vscode.Uri, viewColumn: vscode.ViewColumn, ctx: 
             await renderToPanel(currentUri, sharedPanel, ctx);
           }
           break;
+        case 'downloadSvg':
+          if (message.svg && currentUri) {
+            const defaultPath = currentUri.fsPath.replace(/\.(sv|svh)$/i, '.svg');
+            const saveUri = await vscode.window.showSaveDialog({
+              defaultUri: vscode.Uri.file(defaultPath),
+              filters: { 'SVG Images': ['svg'] }
+            });
+            if (saveUri) {
+              await fs.promises.writeFile(saveUri.fsPath, message.svg, 'utf8');
+              vscode.window.showInformationMessage(`SVG saved to ${path.basename(saveUri.fsPath)}`);
+            }
+          }
+          break;
       }
     });
 
@@ -555,6 +568,11 @@ function wrapSvg(svg: string): string {
         transform: translateX(-50%) scale(1);
       }
 
+      #downloadBtn {
+        font-size: 16px;
+        font-weight: 600;
+      }
+
       /* Settings panel */
       #settingsPanel {
         position: fixed;
@@ -772,6 +790,7 @@ function wrapSvg(svg: string): string {
       <button id="zoomIn" title="Zoom In (+)">+</button>
       <button id="zoomOut" title="Zoom Out (−)">−</button>
       <button id="reset" title="Reset (0)">⌂</button>
+      <button id="downloadBtn" title="Download SVG (D)">↓</button>
       <button id="menuBtn" title="Settings (S)">⚙</button>
     </div>
 
@@ -988,6 +1007,17 @@ function wrapSvg(svg: string): string {
           svg.setAttribute('viewBox', viewBoxAttr);
         });
 
+        // Download functionality
+        const downloadBtn = document.getElementById('downloadBtn');
+        downloadBtn.addEventListener('click', ()=> {
+          if (!svg) return;
+          // Serialize the SVG
+          const serializer = new XMLSerializer();
+          const svgString = serializer.serializeToString(svg);
+          // Send to extension for download
+          vscode.postMessage({ type: 'downloadSvg', svg: svgString });
+        });
+
         // Pan/drag functionality (unchanged)
         let panning = false;
         let startX = 0;
@@ -1136,6 +1166,11 @@ function wrapSvg(svg: string): string {
             case '0':
               e.preventDefault();
               reset.click();
+              break;
+            case 'd':
+            case 'D':
+              e.preventDefault();
+              downloadBtn.click();
               break;
             case 's':
             case 'S':
