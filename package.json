@@ -2,7 +2,7 @@
   "name": "preview-sv",
   "displayName": "Preview .sv",
   "description": "Preview SystemVerilog (.sv) files as schematics using sv2svg (via uvx)",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "easytocloud",
   "engines": {
     "vscode": "^1.80.0"
