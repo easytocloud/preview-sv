@@ -210,6 +210,13 @@
           "type": "boolean",
           "default": false,
           "description": "Use thicker wires for signals with higher fan-out."
+        },
+        "sv2svgPreview.renderOptions.fontScale": {
+          "type": "number",
+          "default": 1.2,
+          "minimum": 0.5,
+          "maximum": 2.0,
+          "description": "Scale factor for all text in the diagram (1.2 = 20% larger, range: 0.5-2.0)."
         }
       }
     },

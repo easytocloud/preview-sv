@@ -34,6 +34,7 @@ type Sv2SvgOptions = {
   fillGates: boolean;
   signalStyles: boolean;
   fanoutWires: boolean;
+  fontScale: number;
 };
 
 let sharedPanel: vscode.WebviewPanel | undefined;
@@ -56,6 +57,7 @@ function getDefaultSv2SvgOptions(): Sv2SvgOptions {
     fillGates: false,
     signalStyles: false,
     fanoutWires: false,
+    fontScale: 1.2,
   };
 }
 
@@ -75,6 +77,7 @@ function loadSv2SvgOptions(): Sv2SvgOptions {
     fillGates: cfg.get('fillGates', false),
     signalStyles: cfg.get('signalStyles', false),
     fanoutWires: cfg.get('fanoutWires', false),
+    fontScale: cfg.get('fontScale', 1.2),
   };
 }
 
@@ -93,6 +96,7 @@ async function saveSv2SvgOptions(options: Sv2SvgOptions): Promise<void> {
   await cfg.update('fillGates', options.fillGates, vscode.ConfigurationTarget.Workspace);
   await cfg.update('signalStyles', options.signalStyles, vscode.ConfigurationTarget.Workspace);
   await cfg.update('fanoutWires', options.fanoutWires, vscode.ConfigurationTarget.Workspace);
+  await cfg.update('fontScale', options.fontScale, vscode.ConfigurationTarget.Workspace);
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -386,6 +390,11 @@ function buildArgs(cfg: Cfg, filePath: string, extra: string[], options: Sv2SvgO
   // Orientation
   if (options.orientation !== 'horizontal') {
     sv2svgArgs.push('--orientation', options.orientation);
+  }
+
+  // Font scale
+  if (options.fontScale !== 1.2) {
+    sv2svgArgs.push('--font-scale', String(options.fontScale));
   }
 
   // Combine all args
@@ -876,6 +885,18 @@ function wrapSvg(svg: string): string {
         </div>
 
         <div class="setting-group">
+          <h3>Typography</h3>
+
+          <div class="setting-item">
+            <label>
+              Font Scale
+              <span class="label-desc">Scale factor for all text (0.5 = 50%, 2.0 = 200%)</span>
+            </label>
+            <input type="number" id="fontScale" min="0.5" max="2.0" step="0.1">
+          </div>
+        </div>
+
+        <div class="setting-group">
           <h3>Advanced</h3>
 
           <div class="checkbox-group">
@@ -1042,6 +1063,7 @@ function wrapSvg(svg: string): string {
           document.getElementById('fillGates').checked = settings.fillGates;
           document.getElementById('signalStyles').checked = settings.signalStyles;
           document.getElementById('fanoutWires').checked = settings.fanoutWires;
+          document.getElementById('fontScale').value = settings.fontScale;
         }
 
         function getSettings() {
@@ -1059,6 +1081,7 @@ function wrapSvg(svg: string): string {
             fillGates: document.getElementById('fillGates').checked,
             signalStyles: document.getElementById('signalStyles').checked,
             fanoutWires: document.getElementById('fanoutWires').checked,
+            fontScale: parseFloat(document.getElementById('fontScale').value) || 1.2,
           };
         }
 
