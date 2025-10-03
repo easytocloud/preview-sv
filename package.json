@@ -2,7 +2,7 @@
   "name": "preview-sv",
   "displayName": "Preview .sv",
   "description": "Preview SystemVerilog (.sv) files as schematics using sv2svg (via uvx)",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "publisher": "easytocloud",
   "engines": {
     "vscode": "^1.80.0"
@@ -215,7 +215,7 @@
           "type": "number",
           "default": 1.2,
           "minimum": 0.5,
-          "maximum": 2.0,
+          "maximum": 2,
           "description": "Scale factor for all text in the diagram (1.2 = 20% larger, range: 0.5-2.0)."
         }
       }
